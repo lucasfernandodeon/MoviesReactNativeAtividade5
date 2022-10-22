@@ -1,9 +1,9 @@
 export class Movie {
-    constructor(filme,ano, tipo,image) {
+    constructor(name,year, type,image) {
        
-        this.filme = filme;
-        this.ano = ano;
-        this.tipo = tipo;
+        this.name = name;
+        this.year = year;
+        this.type = type;
         this.image = image;
       }
 }

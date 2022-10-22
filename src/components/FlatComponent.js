@@ -14,12 +14,12 @@ const FlatComponent = ({ data }) => {
 
   return (
     <TouchableOpacity onPress={navegar} style={styles.container}>
-      <Image source={{ uri: data.image }} resizeMode="contain" style={{ width: 100, height: 100 }} />
+      <Image source={{ uri: data.image }} resizeMode="contain" style={styles.imageStyle} />
 
       <View style={styles.subcontainer}>
-        <Text style={styles.title}>{data.filme}</Text>
-        <Text>{data.ano}</Text>
-        <Text>{data.tipo}</Text>
+        <Text style={styles.title}>{data.name}</Text>
+        <Text>{data.year}</Text>
+        <Text>{data.type}</Text>
       </View>
 
     </TouchableOpacity>
@@ -27,6 +27,7 @@ const FlatComponent = ({ data }) => {
 }
 
 const styles = StyleSheet.create({
+  imageStyle: { width: 100, height: 100 },
   container: {
     backgroundColor: '#cacaca',
     marginBottom: 5,

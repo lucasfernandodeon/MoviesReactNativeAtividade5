@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { searchTitleByName } from 'movier';
-import { View, Text, Image, TouchableOpacity, FlatList, StyleSheet, } from 'react-native';
+import { View, Text, Image, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
@@ -12,52 +12,105 @@ import { Movie } from './model/movie';
 const Tela1 = () => {
 
 
-  // const data = [
-  //   { key: '0', filme: 'SCOOBY! O filme', ano: 2020, estilo: 'Comédia', direcao: 'Tony Cervone', image: 'https://br.web.img3.acsta.net/pictures/20/03/05/20/58/4942195.jpg', descricao: 'Scooby e sua turma encaram o seu maior e mais difícil mistério de todos os tempos: um plano maligno para liberar o cão fantasma, Cérbero, no mundo. Enquanto corre para impedir esse "apocãolipse" global, a turma descobre que Scooby tem um legado secreto e um destino épico maior do que qualquer um podia imaginar.' },
-  //   { key: '1', filme: 'SCOOBY! O filme', ano: 2020, estilo: 'Comédia', direcao: 'Tony Cervone', image: 'https://br.web.img3.acsta.net/pictures/20/03/05/20/58/4942195.jpg', descricao: 'Scooby e sua turma encaram o seu maior e mais difícil mistério de todos os tempos: um plano maligno para liberar o cão fantasma, Cérbero, no mundo. Enquanto corre para impedir esse "apocãolipse" global, a turma descobre que Scooby tem um legado secreto e um destino épico maior do que qualquer um podia imaginar.' }
-  // ]
-
   const [movie, onChangeMovie] = useState('');
   const [movies, setMovies] = useState([]);
+  const [message, setMessage] = useState("Procure o nome de um filme");
+  const [fullList, setFullList] = useState(false);
+  const [enabledSearch, setEnabledSearch] = useState(true);
 
+  const search = () => {
+
+    setEnabledSearch(false)
+    setMovies([])
+    setFullList(false);
+    setMessage("Aguarde...")
+
+    searchTitleByName(movie).then((result) => {
+
+      if (result.length === 0) {
+        setMovies([])
+        setFullList(false);
+        setMessage("Sem Resultados")
+      } else {
+        var auxMovies = [];
+        for (i = 0; i < 15; i++) {
+          var data = result[i];
+          auxMovies = [...auxMovies, new Movie(data['name'],
+            data['titleYear'],
+            data['titleType'],
+            data['thumbnailImageUrl'])]
+        }
+        setMovies(auxMovies);
+        setFullList(true);
+      }
+
+      setEnabledSearch(true)
+
+    })
+  }
 
   return (
     <View>
-      <View style={{ flexDirection: "row" }}>
+
+      <View style={styles.viewStyle}>
         <TextInput
           onChangeText={
             newText => {
               onChangeMovie(newText);
             }
-          } style={{ flex: 2.5 }
+          } style={styles.textInputStyle
 
 
           }></TextInput>
 
-        <Icon name="search" size={30} color="black" style={{
-          flex: 0.5,
-          alignSelf: "center"
-        }} onPress={
-          () => searchTitleByName(movie).then((result) => {
-            console.log(result);
-            //var myObject = JSON.parse(result);
-            var aux=[];
-          
-            for( i=0;i<5;i++){
-              var dataAux = result[i];
-              aux = [...aux, new Movie(dataAux['name'],
-              dataAux['titleYear'],
-              dataAux['titleType'],
-              dataAux['thumbnailImageUrl'])]
-            }
-            setMovies(aux);
-          })
+        <Icon name="search" size={30} color="black" style=
+        {[styles.iconStyle, enabledSearch ? styles.enabledColor : styles.disabledColor]} onPress={() => {
+          if (enabledSearch) {
+            search();
+          }
+        }
         } />
 
       </View>
+
+      {!fullList ? (
+        <Text
+          style={styles.messageListTextSytle}>
+          {message}
+        </Text>) : null}
       <FlatList data={movies} renderItem={({ item }) => <FlatComponent data={item} />} />
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  viewStyle: {
+    flexDirection: "row",
+    margin: 5
+  },
+  iconStyle: {
+    flex: 0.5,
+    alignSelf: "center",
+    margin: 2,
+  },
+  enabledColor:{
+    color:"black"
+  },  
+  disabledColor:{
+    color:"grey"
+  },
+  messageListTextSytle: {
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    fontWeight: "bold",
+    color: "black",
+    fontSize: 20,
+  },
+  textInputStyle: {
+    flex: 4,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 10
+  }
+});
 export default Tela1;
